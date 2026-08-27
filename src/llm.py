@@ -9,7 +9,7 @@ from src.opensearch import hybrid_search
 from src.utils import setup_logging
 
 # setup logger
-setup_logging
+setup_logging()
 logger = logging.getLogger(__name__)
 
 
@@ -17,8 +17,9 @@ logger = logging.getLogger(__name__)
 def ensure_model_pulled(model: str) -> bool:
     
     try:
-        available_models = ollama.list(model)
-        if model not in available_models:
+        available_models = ollama.list()
+        model_names = [m.get('name', '') for m in available_models.get('models', [])]
+        if model not in model_names:
             logger.info(f"Model {model} not found locally. Pulling the model...")
             ollama.pull(model)
             logger.info(f"Model {model} has been pulled and is now available locally.")
@@ -107,7 +108,7 @@ def generate_response_streaming(
     if use_hybrid_search:
         logger.info("Performing hybrid search.")
         if ASSYMETRIC_EMBEDDING:
-            prefixed_query = f"passage: {query}"
+            prefixed_query = f"query: {query}"
         else:
             prefixed_query = f"{query}"
             

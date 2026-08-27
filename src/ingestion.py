@@ -3,7 +3,7 @@ from src.constants import EMBEDDING_DIMENSION, OPENSEARCH_INDEX, ASSYMETRIC_EMBE
 from typing import Dict, Any, Tuple, List
 from opensearchpy import OpenSearch, helpers
 import logging
-from src.opensearch import get_opensearch_client
+from src.opensearch import get_opensearch_client, create_search_pipeline
 from src.utils import setup_logging
 
 # Initialize logger
@@ -27,6 +27,9 @@ def create_index(client: OpenSearch) -> None:
         logger.info(f"Created index {OPENSEARCH_INDEX}: {response}")
     else:
         logger.info(f"Index {OPENSEARCH_INDEX} already exists.")
+    
+    # Create search pipeline for hybrid search
+    create_search_pipeline(client)
 
 
 def delete_index(client: OpenSearch) -> None:
@@ -39,10 +42,11 @@ def delete_index(client: OpenSearch) -> None:
         logger.info(f"Index {OPENSEARCH_INDEX} does not exist.")
 
         
-def bulk_index_documents(documents: List[Dict[str, Any]]) -> Tuple[int, List[Any]]:
+def bulk_index_documents(documents: List[Dict[str, Any]], client: OpenSearch = None) -> Tuple[int, List[Any]]:
 
     actions = []
-    client = get_opensearch_client()
+    if client is None:
+        client = get_opensearch_client()
 
     for doc in documents:
         doc_id = doc["doc_id"]
