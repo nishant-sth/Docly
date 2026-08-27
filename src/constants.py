@@ -6,7 +6,7 @@ EMBEDDING_DIMENSION = 768  # Embedding model settings
 TEXT_CHUNK_SIZE = 300  # Maximum number of characters in each text chunk for
 
 OLLAMA_MODEL_NAME = (
-    "qwen3:8b"
+    "qwen2.5:3b"
 )
 
 # Logging

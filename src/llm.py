@@ -62,7 +62,7 @@ def prompt_template(query: str, context: str, history: List[Dict[str, str]]):
     
     prompt = "You are a knowledgeable chatbot assistant"
     if context:
-        prompt += ("Use the following context to answer the user's questions. \n Context:" + {context}+ "\n")
+        prompt += f"Use the following context to answer the user's questions. \n Context: {context}\n"
     else:
         prompt += "Answer the question with best of your knowledge. \n"
         

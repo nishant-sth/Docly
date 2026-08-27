@@ -22,11 +22,25 @@ def load_index_config() -> Dict[str, Any]:
 
 def create_index(client: OpenSearch) -> None:
     index_body = load_index_config()
+    expected_dimension = EMBEDDING_DIMENSION
+    
     if not client.indices.exists(index=OPENSEARCH_INDEX):
         response = client.indices.create(index=OPENSEARCH_INDEX, body=index_body)
         logger.info(f"Created index {OPENSEARCH_INDEX}: {response}")
     else:
-        logger.info(f"Index {OPENSEARCH_INDEX} already exists.")
+        # Check if existing index has correct embedding dimension
+        try:
+            mapping = client.indices.get_mapping(index=OPENSEARCH_INDEX)
+            existing_dimension = mapping[OPENSEARCH_INDEX]["mappings"]["properties"]["embedding"].get("dimension")
+            if existing_dimension != expected_dimension:
+                logger.warning(f"Index dimension mismatch: expected {expected_dimension}, found {existing_dimension}. Recreating index.")
+                client.indices.delete(index=OPENSEARCH_INDEX)
+                response = client.indices.create(index=OPENSEARCH_INDEX, body=index_body)
+                logger.info(f"Recreated index {OPENSEARCH_INDEX} with dimension {expected_dimension}: {response}")
+            else:
+                logger.info(f"Index {OPENSEARCH_INDEX} already exists with correct dimension.")
+        except Exception as e:
+            logger.warning(f"Could not verify index dimension: {e}")
     
     # Create search pipeline for hybrid search
     create_search_pipeline(client)

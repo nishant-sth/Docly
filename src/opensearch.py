@@ -17,7 +17,11 @@ def get_opensearch_client() -> OpenSearch:
         http_compress=True,
         timeout=30,
         max_retries=3,
-        retry_on_timeout=True
+        retry_on_timeout=True,
+        use_ssl=False,
+        verify_certs=False,
+        ssl_assert_hostname=False,
+        ssl_show_warn=False,
     )
     logger.info("OpenSearch client initialized")
     return client
