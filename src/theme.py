@@ -263,13 +263,19 @@ def apply_theme():
     """, unsafe_allow_html=True)
 
 def render_sidebar():
-    logo_path = "images/docly_logo.png"
     with st.sidebar:
-        st.markdown(f"""
-        <div style="text-align: center; padding: 1.5rem 1rem 1rem;">
-            <img src={logo_path} width="120" style="margin-bottom: 0.75rem;" />
-            <h2 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--text);">Docly</h2>
-            <p style="margin: 0.25rem 0 0; font-size: 0.875rem; color: var(--text-muted);">AI Document Assistant</p>
+        try:
+            st.image("images/docly_logo.png", clamp=True)
+        except Exception:
+            st.markdown("""
+            <div style="text-align: center; padding: 1rem;">
+                <div style="font-size: 3rem;">📄</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div style="text-align: center; padding: 0.5rem 1rem 1rem;">
+            <p style="margin: 0.25rem 0 0; font-size: 0.875rem; color: var(--text-muted);">Your Private Local AI Document Assistant</p>
         </div>
         """, unsafe_allow_html=True)
         st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
